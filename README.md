@@ -6,6 +6,9 @@ More information about how the plugin works can be found here:
 [http://carlosmartinezt.com/2013/11/sagepay-server-integration-with-nopcommerce-3-10-source-code-available/](http://carlosmartinezt.com/2013/11/sagepay-server-integration-with-nopcommerce-3-10-source-code-available)
 
 
+<a href='https://pledgie.com/campaigns/24757'><img alt='Click here to lend your support to: Sagepay Plugin and make a donation at pledgie.com !' src='https://pledgie.com/campaigns/24757.png?skin_name=chrome' border='0' ></a>
+
+
 Sage Pay payment plugin for NopCommerce 3.x
 -------------------------------------------
 
