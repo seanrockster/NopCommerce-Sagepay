@@ -1,0 +1,53 @@
+﻿@using Nop.Plugin.Payments.SagePayServer.Models
+
+@model PaymentSagePayServerModel
+
+@{
+    Layout = "";
+}
+<div class="sagePayWrapper">
+    @if (Model.Warnings.Count > 0)
+    { 
+        <p>
+            @T("Plugins.Payments.SagePayServer.PaymentInfoError")
+        </p>
+        <ul>
+            @foreach (var warning in Model.Warnings)
+            {
+                <li>@warning</li>     
+            }
+        </ul>
+        <div>
+            <a href="@Url.RouteUrl("CheckoutPaymentMethod")">Try Again</a>
+        </div>
+    }
+
+    @if (!String.IsNullOrEmpty(Model.FrameUrl))
+    {
+        <iframe src="@Model.FrameUrl" style="width:100%; height:600px;border: none;"></iframe>
+    }
+    <div style="display: none">
+        @Html.TextBoxFor(m => m.IsOnePageCheckout)
+    </div>
+</div>
+
+@*We need to hide the "continue" button because everything happens inside the iframe*@
+<script>
+    $(function () {
+        var $submit;
+
+        if ($('#IsOnePageCheckout').val() == "True") {
+            $submit = $('#payment-info-buttons-container input');
+        }
+        else {
+            $submit = $('.sagePayWrapper').parents('form').find('input[type=submit]');
+        }
+
+        if ($submit.length != 1) {
+            alert('submit button was not found');
+            return;
+        }
+
+        $submit.hide();
+    });
+</script>

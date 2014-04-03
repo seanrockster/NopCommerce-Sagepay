@@ -1,0 +1,107 @@
+﻿@using Nop.Core
+@using Nop.Core.Infrastructure
+@using Nop.Plugin.Payments.SagePayServer.Models
+
+@model PaymentSagePayServerModel
+@{
+    Layout = "";
+}
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Sagepay Server Response page</title>
+    <script src="~/Plugins/Payments.SagePayServer/Scripts/jquery-1.7.1.min.js"></script>
+</head>
+<body>
+    <div class="cols cols--white clearfix">
+        @if (Model.Warnings.Count > 0)
+        {
+            <div class="message-error">
+                @for (var i = 0; i < Model.Warnings.Count; i++)
+                {
+                    @Model.Warnings[i]
+
+                    if (i != Model.Warnings.Count - 1)
+                    {
+                    <br />
+                    }
+                }
+            </div>
+            <form action="@Url.RouteUrl("CheckoutPaymentMethod")" method="get" target="_parent">
+                <p>
+                    @T("Plugins.Payments.SagePayServer.ResponsePageError")
+                </p>
+                <div class="select-button">
+                    <input type="submit" value="@T("Admin.Configuration.Payment.Methods.BackToList")" />
+                </div>
+            </form>
+        }
+        else
+        {
+            <form id="sagepayPaymentInfoForm" action="@Url.RouteUrl("CheckoutPaymentInfo")" method="post" target="_parent">
+                <p>
+                    @T("Plugins.Payments.SagePayServer.PaymentMade")
+                </p>
+                <p id="sagepayPleaseWait">
+                    You will be automatically redirected <span id="sagepaySeconds">3</span> seconds...
+                </p>
+
+                <input type="hidden" id="OrderGuid" name="OrderGuid" value="@Model.OrderGuid"/>
+                <input type="hidden" name="nextstep" id="nextstep" value="this form value is required" />
+
+                <input id="sagepayPostPaymentInfo" type="submit" value="Click to continue" style="display: none;" />
+            </form>
+        
+            if (Model.IsOnePageCheckout == false)
+            {
+                <script type="text/javascript">
+
+                    var myVar = setInterval(function () {
+                        var seconds = parseInt($('#sagepaySeconds').text());
+
+                        if (seconds == 1) {
+                            window.clearInterval(myVar);
+                            $('#sagepayPostPaymentInfo').show();
+                            $('#sagepayPleaseWait').hide();
+                        }
+                        else {
+                            $("#sagepaySeconds").text(seconds - 1);
+                        }
+                    }, 1000);
+
+                    $('#sagepayPaymentInfoForm').submit();
+                </script>
+            }
+            else
+            {
+                var webHelper = EngineContext.Current.Resolve<IWebHelper>();
+            
+                <script type="text/javascript">
+
+                    $(function() {
+                        var checkout = window.parent.Checkout;
+                        var paymentInfo = window.parent.PaymentInfo;
+
+                        paymentInfo.save = function() { //Extending PaymentInfo Class
+                            if (checkout.loadWaiting != false) return;
+                            console.log($('#sagepayPaymentInfoForm').serialize());
+                            checkout.setLoadWaiting('payment-info');
+                            $.ajax({
+                                url: '@(webHelper.GetStoreLocation())checkout/OpcSavePaymentInfo/',
+                                data: $('#sagepayPaymentInfoForm').serialize(),
+                                type: 'post',
+                                success: paymentInfo.nextStep,
+                                complete: paymentInfo.resetLoadWaiting,
+                                error: checkout.ajaxFailure
+                            });
+                        };
+
+                        paymentInfo.save();
+                    });
+                </script>
+            }
+        }
+    </div>
+
+</body>
+</html>
