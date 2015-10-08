@@ -1,111 +1,154 @@
 ﻿@{
     Layout = "";
 }
+@using Nop.Web.Framework;
 @using Nop.Plugin.Payments.SagePayServer.Models
-
 @model ConfigurationModel
 
 @Html.Action("StoreScopeConfiguration", "Setting", new { area = "Admin" })
-@using (Html.BeginForm())
-{
-    <table class="adminContent">
-        <tr>
-            <td colspan="3">
-                <h2>Welcome to SagePay Server Configuration </h2>
-                <p>
-                    
-                </p>
-            </td>
-        </tr>
-        <tr>
-            <td colspan="3" width="100%">
-                <hr />
-            </td>
-        </tr>
-        <tr>
-            <td class="adminTitle">
-                @Html.OverrideStoreCheckboxFor(model => model.TransactTypeId_OverrideForStore, model => model.TransactTypeId, Model.ActiveStoreScopeConfiguration)
-                @Html.NopLabelFor(model => model.AvailableTransactTypes):
-            </td>
-            <td class="adminData">
-                @Html.DropDownList("TransactTypeId", Model.AvailableTransactTypes)
-            </td>
-            <td>
-                if your Sage Pay account supports these payment types, they could be: <br />
-                <strong>PAYMENT: </strong> to take the payment when a customer enters their credit card<br />
-                <strong>DEFERRED: </strong> to capture the funds, but relase it later (after shipping items)<br />
-                <strong>AUTHENTICATE: </strong> to validate the card but not take any money <br /><br />
-            </td>
-        </tr>
-        <tr>
-            <td class="adminTitle">
-                @Html.OverrideStoreCheckboxFor(model => model.ConnectToId_OverrideForStore, model => model.ConnectToId, Model.ActiveStoreScopeConfiguration)
-                @Html.NopLabelFor(model => model.AvailableConnectTos):
-            </td>
-            <td class="adminData">
-                @Html.DropDownList("ConnectToId", Model.AvailableConnectTos)
-            </td>
-            <td>
-                Set to <strong>SIMULATOR</strong> for the Simulator expert system, 
-                <strong>TEST</strong> for the Test Server and <strong>LIVE</strong> in the live environment<br /><br />
-            </td>
-        </tr>
-        <tr>
-            <td class="adminTitle">
-                @Html.OverrideStoreCheckboxFor(model => model.VendorName_OverrideForStore, model => model.VendorName, Model.ActiveStoreScopeConfiguration)
-                @Html.NopLabelFor(model => model.VendorName):
-            </td>
-            <td class="adminData">
-                @Html.EditorFor(model => model.VendorName)
-                @Html.ValidationMessageFor(model => model.VendorName)
-            </td>
-            <td>
-                Set this value to the Vendor Name assigned to you by Sage Pay or chosen when you applied<br /><br />
-            </td>
-        </tr>
-        <tr>
-            <td class="adminTitle">
-                @Html.OverrideStoreCheckboxFor(model => model.AdditionalFee_OverrideForStore, model => model.AdditionalFee, Model.ActiveStoreScopeConfiguration)
-                @Html.NopLabelFor(model => model.AdditionalFee):
-            </td>
-            <td class="adminData">
-                @Html.EditorFor(model => model.AdditionalFee)
-                @Html.ValidationMessageFor(model => model.AdditionalFee)
-            </td>
-            <td>
-                
-            </td>
-        </tr>
-        <tr>
-            <td class="adminTitle">
-                @Html.OverrideStoreCheckboxFor(model => model.ProfileId_OverrideForStore, model => model.ProfileId, Model.ActiveStoreScopeConfiguration)
-                @Html.NopLabelFor(model => model.AvailableProfiles):
-            </td>
-            <td class="adminData">
-                @Html.DropDownList("ProfileId", Model.AvailableProfiles)
-            </td>
-            <td>
-                Set to <strong>NORMAL</strong> to redirect the customer to Segapay (One page checkout does not use this mode), 
-                and <strong>LOW</strong> To use an iframe. <br /><br />
-            </td>
-        </tr>
-        <tr>
-            <td class="adminTitle">
-                @Html.OverrideStoreCheckboxFor(model => model.PartnerId_OverrideForStore, model => model.PartnerId, Model.ActiveStoreScopeConfiguration)
-                @Html.NopLabelFor(model => model.PartnerId):
-            </td>
-            <td class="adminData">
-                @Html.EditorFor(model => model.PartnerId)
-                @Html.ValidationMessageFor(model => model.PartnerId)
-            </td>
-            <td>
-            </td>
-        </tr>
-        <tr>
-            <td colspan="3" width="100%">
-                <input type="submit" name="save" class="t-button" value="@T("Admin.Common.Save")" />
-            </td>
-        </tr>
-    </table>
-    
-}
+
+<div class="adminContent" style="border-bottom: dashed #666666 2px">
+    <h2>Welcome to SagePay Server Configuration </h2>
+    <div style="margin-top: 20px;">
+        <p>instructions here</p>
+
+        <p><b>Traction Type</b><br/>what is a traction type </p>
+
+    </div>
+</div>
+
+<div class="table-wrapper" style="maring-top: 20x;">
+
+    @using (Html.BeginForm())
+    {
+        @Html.AntiForgeryToken()
+        <table class="adminContent">
+
+
+            <tr>
+                <td class="adminTitle">
+                    @Html.OverrideStoreCheckboxFor(model => model.TransactTypeId_OverrideForStore, model => model.TransactTypeId, Model.ActiveStoreScopeConfiguration)
+                    @Html.NopLabelFor(model => model.AvailableTransactTypes):
+                </td>
+                <td class="adminData">
+                    @Html.DropDownList("TransactTypeId", Model.AvailableTransactTypes)
+                </td>
+                <td>
+                    if your Sage Pay account supports these payment types, they could be: <br />
+                    <strong>PAYMENT: </strong> to take the payment when a customer enters their credit card<br />
+                    <strong>DEFERRED: </strong> to capture the funds, but relase it later (after shipping items)<br />
+                    <strong>AUTHENTICATE: </strong> to validate the card but not take any money <br /><br />
+                </td>
+            </tr>
+            <tr>
+                <td class="adminTitle">
+                    @Html.OverrideStoreCheckboxFor(model => model.ConnectToId_OverrideForStore, model => model.ConnectToId, Model.ActiveStoreScopeConfiguration)
+                    @Html.NopLabelFor(model => model.AvailableConnectTos):
+                </td>
+                <td class="adminData">
+                    @Html.DropDownList("ConnectToId", Model.AvailableConnectTos)
+                </td>
+                <td>
+                    Set to <strong>SIMULATOR</strong> for the Simulator expert system,
+                    <strong>TEST</strong> for the Test Server and <strong>LIVE</strong> in the live environment<br /><br />
+                </td>
+            </tr>
+            <tr>
+                <td class="adminTitle">
+                    @Html.OverrideStoreCheckboxFor(model => model.VendorName_OverrideForStore, model => model.VendorName, Model.ActiveStoreScopeConfiguration)
+                    @Html.NopLabelFor(model => model.VendorName):
+                </td>
+                <td class="adminData">
+                    @Html.EditorFor(model => model.VendorName)
+                    @Html.ValidationMessageFor(model => model.VendorName)
+                </td>
+                <td>
+                    Set this value to the Vendor Name assigned to you by Sage Pay or chosen when you applied<br /><br />
+                </td>
+            </tr>
+            <tr>
+                <td class="adminTitle">
+                    @Html.OverrideStoreCheckboxFor(model => model.AdditionalFee_OverrideForStore, model => model.AdditionalFee, Model.ActiveStoreScopeConfiguration)
+                    @Html.NopLabelFor(model => model.AdditionalFee):
+                </td>
+                <td class="adminData">
+                    @Html.EditorFor(model => model.AdditionalFee)
+                    @Html.ValidationMessageFor(model => model.AdditionalFee)
+                </td>
+                <td></td>
+            </tr>
+            <tr>
+                <td class="adminTitle">
+                    @Html.OverrideStoreCheckboxFor(model => model.ProfileId_OverrideForStore, model => model.ProfileId, Model.ActiveStoreScopeConfiguration)
+                    @Html.NopLabelFor(model => model.AvailableProfiles):
+                </td>
+                <td class="adminData">
+                    @Html.DropDownList("ProfileId", Model.AvailableProfiles)
+                </td>
+                <td>
+                    Set to <strong>NORMAL</strong> to redirect the customer to Segapay (One page checkout does not use this mode),
+                    and <strong>LOW</strong> To use an iframe. <br /><br />
+                </td>
+            </tr>
+            <tr>
+                <td class="adminTitle">
+                    @Html.OverrideStoreCheckboxFor(model => model.PartnerId_OverrideForStore, model => model.PartnerId, Model.ActiveStoreScopeConfiguration)
+                    @Html.NopLabelFor(model => model.PartnerId):
+                </td>
+                <td class="adminData">
+                    @Html.EditorFor(model => model.PartnerId)
+                    @Html.ValidationMessageFor(model => model.PartnerId)
+                </td>
+                <td></td>
+            </tr>
+
+            <tr>
+                <td class="adminTitle">
+                    @Html.OverrideStoreCheckboxFor(model => model.GiftAid, model => model.GiftAid, Model.ActiveStoreScopeConfiguration)
+                    @Html.NopLabelFor(model => model.GiftAid):
+                </td>
+                <td class="adminData">
+                    @Html.EditorFor(model => model.GiftAid)
+                    @Html.ValidationMessageFor(model => model.GiftAid)
+                </td>
+                <td></td>
+            </tr>
+
+
+            <tr>
+                <td class="adminTitle">
+                    @Html.OverrideStoreCheckboxFor(model => model.LiveEncryptionPassword_OverrideForStore, model => model.LiveEncryptionPassword, Model.ActiveStoreScopeConfiguration)
+                    @Html.NopLabelFor(model => model.LiveEncryptionPassword):
+                </td>
+                <td class="adminData">
+                    @Html.EditorFor(model => model.LiveEncryptionPassword)
+                    @Html.ValidationMessageFor(model => model.LiveEncryptionPassword)
+                </td>
+                <td></td>
+            </tr>
+
+            <tr>
+                <td class="adminTitle">
+                    @Html.OverrideStoreCheckboxFor(model => model.TestEncryptionPassword_OverrideForStore, model => model.TestEncryptionPassword, Model.ActiveStoreScopeConfiguration)
+                    @Html.NopLabelFor(model => model.TestEncryptionPassword):
+                </td>
+                <td class="adminData">
+                    @Html.EditorFor(model => model.TestEncryptionPassword)
+                    @Html.ValidationMessageFor(model => model.TestEncryptionPassword)
+                </td>
+                <td></td>
+            </tr>
+
+
+
+
+
+            <tr>
+                <td colspan="3" width="100%">
+                    <input type="submit" name="save"  value="@T("Admin.Common.Save")" />
+                </td>
+            </tr>
+        </table>
+
+    }
+</div>

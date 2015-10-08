@@ -34,5 +34,25 @@ namespace Nop.Plugin.Payments.SagePayServer.Models
         [NopResourceDisplayName("Plugins.Payments.SagePayServer.Fields.AdditionalFee")]
         public decimal AdditionalFee { get; set; }
         public bool AdditionalFee_OverrideForStore { get; set; }
+
+
+
+        [NopResourceDisplayName("Plugins.Payments.SagePayServer.Fields.GiftAid")]
+        public bool GiftAid { get; set; }
+        public bool GiftAid_OverrideForStore { get; set; }
+
+
+        [NopResourceDisplayName("Plugins.Payments.SagePayServer.Fields.TestEncryptionPassword")]
+        public string TestEncryptionPassword { get; set; }
+        public bool TestEncryptionPassword_OverrideForStore { get; set; }
+
+
+        [NopResourceDisplayName("Plugins.Payments.SagePayServer.Fields.LiveEncryptionPassword")]
+        public string LiveEncryptionPassword { get; set; }
+        public bool LiveEncryptionPassword_OverrideForStore { get; set; }
+
+
+
+
     }
 }

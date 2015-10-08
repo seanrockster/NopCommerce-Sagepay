@@ -39,26 +39,10 @@ namespace Nop.Plugin.Payments.SagePayServer.Core.Domain
         /// </summary>
         public decimal AdditionalFee { get; set; }
 
-    }
+        public bool GiftAid { get; set; }
 
-    public enum ConnectToValues : int
-    {
-        Simulator = 10,
-        Test = 20,
-        Live = 30,
-    }
+        public string LiveEncryptionPassword { get; set; }
+        public string TestEncryptionPassword { get; set; }
 
-    public enum TransactTypeValues : int
-    {
-        Payment = 10,
-        Deferred = 20,
-        Authorize = 30,
     }
-
-    public enum ProfileValues : int
-    {
-        Low = 10,
-        Normal = 20,
-    }
-
 }

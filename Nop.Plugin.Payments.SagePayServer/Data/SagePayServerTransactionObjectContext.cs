@@ -48,6 +48,24 @@ namespace Nop.Plugin.Payments.SagePayServer.Data
             return 0;
         }
 
+        public void Detach(object entity)
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool ProxyCreationEnabled
+        {
+            get { throw new NotImplementedException(); }
+            set { throw new NotImplementedException(); }
+        }
+
+        public bool AutoDetectChangesEnabled
+        {
+            get { throw new NotImplementedException(); }
+            set { throw new NotImplementedException(); }
+        }
+
+
         public void InstallSchema()
         {
             ((IObjectContextAdapter)this).ObjectContext.CreateDatabaseScript();

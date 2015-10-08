@@ -1,8 +1,8 @@
 ﻿Group: Payment methods
 FriendlyName: Debit/Credit Card
 SystemName: Payments.SagePayServer
-Version: 1.5.3
-SupportedVersions: 3.20
+Version: 1.6.0
+SupportedVersions: 3.60
 Author: Carlos Martinez
 DisplayOrder: 1
 FileName: Nop.Plugin.Payments.SagePayServer.dll

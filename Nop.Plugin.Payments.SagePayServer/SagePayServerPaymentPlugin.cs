@@ -42,7 +42,7 @@ namespace Nop.Plugin.Payments.SagePayServer
 
         #region Ctor
 
-        public SagePayServerPaymentPlugin(ISagePayServerWorkflowService sagePayServerWorkflowService, ISettingService settingService, 
+        public SagePayServerPaymentPlugin(ISagePayServerWorkflowService sagePayServerWorkflowService, ISettingService settingService,
             ISagePayServerTransactionService sagePayServerTransactionService, IOrderTotalCalculationService orderTotalCalculationService,
             SagePayServerTransactionObjectContext context, SagePayServerPaymentSettings sagePayServerPaymentSettings)
         {
@@ -110,9 +110,9 @@ namespace Nop.Plugin.Payments.SagePayServer
                 result.AddError(transx.StatusDetail);
             }
 
-            
+
             return result;
-            
+
         }
 
         /// <summary>
@@ -121,6 +121,11 @@ namespace Nop.Plugin.Payments.SagePayServer
         /// <param name="postProcessPaymentRequest">Payment info required for an order processing</param>
         public void PostProcessPayment(PostProcessPaymentRequest postProcessPaymentRequest)
         {
+        }
+
+        public bool HidePaymentMethod(IList<ShoppingCartItem> cart)
+        {
+            return false;
         }
 
         /// <summary>
@@ -280,7 +285,7 @@ namespace Nop.Plugin.Payments.SagePayServer
             var settings = new SagePayServerPaymentSettings()
             {
                 TransactType = TransactTypeValues.Payment,
-                ConnectTo = ConnectToValues.Simulator,
+                //ConnectTo = ConnectToValues.Simulator,
                 Profile = ProfileValues.Normal                
             };
             _settingService.SaveSetting(settings);
@@ -302,7 +307,12 @@ namespace Nop.Plugin.Payments.SagePayServer
             this.AddOrUpdatePluginLocaleResource("Plugins.Payments.SagePayServer.PaymentInfoError", "There were errors while registering a new transaction. Please try again. If you continue to have problems please contact us and we will be able to assist you.");
             this.AddOrUpdatePluginLocaleResource("Plugins.Payments.SagePayServer.ResponsePageError", "There were errors while processing your payment. Please try again. If you continue to have problems please contact us and we will be able to assist you.");
             this.AddOrUpdatePluginLocaleResource("Plugins.Payments.SagePayServer.PaymentMade", "Your payment has been made.");
-          
+
+            this.AddOrUpdatePluginLocaleResource("Plugins.Payments.SagePayServer.Fields.GiftAid", "Gift Aid");
+            this.AddOrUpdatePluginLocaleResource("Plugins.Payments.SagePayServer.Fields.LiveEncryptionPassword", "Live Encryption Password");
+            this.AddOrUpdatePluginLocaleResource("Plugins.Payments.SagePayServer.Fields.TestEncryptionPassword", "Test Encryption Password");
+
+            
             _context.InstallSchema();
 
             base.Install();
@@ -330,6 +340,10 @@ namespace Nop.Plugin.Payments.SagePayServer
             this.DeletePluginLocaleResource("Plugins.Payments.SagePayServer.PaymentInfoError");
             this.DeletePluginLocaleResource("Plugins.Payments.SagePayServer.ResponsePageError");
             this.DeletePluginLocaleResource("Plugins.Payments.SagePayServer.PaymentMade");
+
+            this.DeletePluginLocaleResource("Plugins.Payments.SagePayServer.Fields.GiftAid");
+            this.DeletePluginLocaleResource("Plugins.Payments.SagePayServer.Fields.LiveEncryptionPassword");
+            this.DeletePluginLocaleResource("Plugins.Payments.SagePayServer.Fields.TestEncryptionPassword");
 
             base.Uninstall();
         }

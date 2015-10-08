@@ -16,7 +16,7 @@ using System.Web.Mvc;
 
 namespace Nop.Plugin.Payments.SagePayServer.Controllers
 {
-    public class PaymentSagePayServerController : BaseNopPaymentController
+    public class PaymentSagePayServerController : BasePaymentController
     {
 
         #region Private fields
@@ -24,7 +24,7 @@ namespace Nop.Plugin.Payments.SagePayServer.Controllers
         private readonly ISagePayServerWorkflowService _sagePayServerWorkflowService;
         private readonly ISettingService _settingService;
         private readonly ISagePayServerTransactionService _sagePayServerTransactionService;
-        private readonly IMobileDeviceHelper _mobileDeviceHelper;
+       
 
         private readonly IStoreService _storeService;
         private readonly IWorkContext _workContext;
@@ -36,7 +36,7 @@ namespace Nop.Plugin.Payments.SagePayServer.Controllers
         #region Constructor
 
         public PaymentSagePayServerController(ISettingService settingService, ISagePayServerTransactionService sagePayServerTransactionService,
-            IMobileDeviceHelper mobileDeviceHelper, ISagePayServerWorkflowService sagePayServerWorkflowService, 
+            ISagePayServerWorkflowService sagePayServerWorkflowService, 
             IStoreService storeService, IWorkContext workContext,
             OrderSettings orderSettings, HttpContextBase httpContext)
         {
@@ -45,7 +45,7 @@ namespace Nop.Plugin.Payments.SagePayServer.Controllers
             this._storeService = storeService;
             this._orderSettings = orderSettings;
             this._httpContext = httpContext;
-            this._mobileDeviceHelper = mobileDeviceHelper;
+           
             this._sagePayServerWorkflowService = sagePayServerWorkflowService;
             this._workContext = workContext;
         }
@@ -67,6 +67,9 @@ namespace Nop.Plugin.Payments.SagePayServer.Controllers
                                 VendorName = sagePayServerPaymentSettings.VendorName,
                                 PartnerId = sagePayServerPaymentSettings.PartnerId,
                                 AdditionalFee = sagePayServerPaymentSettings.AdditionalFee,
+                                GiftAid = sagePayServerPaymentSettings.GiftAid,
+                                LiveEncryptionPassword = sagePayServerPaymentSettings.LiveEncryptionPassword,
+                                TestEncryptionPassword = sagePayServerPaymentSettings.TestEncryptionPassword
                             };
 
             model.AvailableTransactTypes = sagePayServerPaymentSettings.TransactType.ToSelectList();
@@ -82,9 +85,12 @@ namespace Nop.Plugin.Payments.SagePayServer.Controllers
                 model.VendorName_OverrideForStore = _settingService.SettingExists(sagePayServerPaymentSettings, x => x.VendorName, storeScope);
                 model.ProfileId_OverrideForStore = _settingService.SettingExists(sagePayServerPaymentSettings, x => x.Profile, storeScope);
                 model.AdditionalFee_OverrideForStore = _settingService.SettingExists(sagePayServerPaymentSettings, x => x.AdditionalFee, storeScope);
+                model.GiftAid_OverrideForStore = _settingService.SettingExists(sagePayServerPaymentSettings, x => x.GiftAid, storeScope);
+                model.TestEncryptionPassword_OverrideForStore = _settingService.SettingExists(sagePayServerPaymentSettings, x => x.TestEncryptionPassword, storeScope);
+                model.LiveEncryptionPassword_OverrideForStore = _settingService.SettingExists(sagePayServerPaymentSettings, x => x.LiveEncryptionPassword, storeScope);
             }
 
-            return View("Nop.Plugin.Payments.SagePayServer.Views.PaymentSagePayServer.Configure", model);
+            return View("~/Plugins/Payments.SagePayServer/Views/PaymentSagePayServer/Configure.cshtml", model);
         }
 
         [HttpPost]
@@ -106,7 +112,23 @@ namespace Nop.Plugin.Payments.SagePayServer.Controllers
             sagePayServerPaymentSettings.VendorName = model.VendorName;
             sagePayServerPaymentSettings.PartnerId = model.PartnerId;
             sagePayServerPaymentSettings.AdditionalFee = model.AdditionalFee;
+            sagePayServerPaymentSettings.GiftAid = model.GiftAid;
+            sagePayServerPaymentSettings.LiveEncryptionPassword = model.LiveEncryptionPassword;
+            sagePayServerPaymentSettings.TestEncryptionPassword = model.TestEncryptionPassword;
+            
 
+            UpdateSettings(model, storeScope, sagePayServerPaymentSettings);
+
+
+            //now clear settings cache
+            _settingService.ClearCache();
+
+            return Configure();
+        }
+
+        protected virtual void UpdateSettings(ConfigurationModel model, int storeScope,
+            SagePayServerPaymentSettings sagePayServerPaymentSettings)
+        {
             /* We do not clear cache after each setting update.
              * This behavior can increase performance because cached settings will not be cleared 
              * and loaded from database after each update */
@@ -140,10 +162,20 @@ namespace Nop.Plugin.Payments.SagePayServer.Controllers
             else if (storeScope > 0)
                 _settingService.DeleteSetting(sagePayServerPaymentSettings, x => x.AdditionalFee, storeScope);
 
-            //now clear settings cache
-            _settingService.ClearCache();
+            if (model.GiftAid_OverrideForStore || storeScope == 0)
+                _settingService.SaveSetting(sagePayServerPaymentSettings, x => x.GiftAid, storeScope, false);
+            else if (storeScope > 0)
+                _settingService.DeleteSetting(sagePayServerPaymentSettings, x => x.GiftAid, storeScope);
 
-            return Configure();
+            if (model.TestEncryptionPassword_OverrideForStore || storeScope == 0)
+                _settingService.SaveSetting(sagePayServerPaymentSettings, x => x.TestEncryptionPassword, storeScope, false);
+            else if (storeScope > 0)
+                _settingService.DeleteSetting(sagePayServerPaymentSettings, x => x.TestEncryptionPassword, storeScope);
+
+            if (model.LiveEncryptionPassword_OverrideForStore || storeScope == 0)
+                _settingService.SaveSetting(sagePayServerPaymentSettings, x => x.LiveEncryptionPassword, storeScope, false);
+            else if (storeScope > 0)
+                _settingService.DeleteSetting(sagePayServerPaymentSettings, x => x.LiveEncryptionPassword, storeScope);
         }
 
         [ChildActionOnly]
@@ -162,7 +194,7 @@ namespace Nop.Plugin.Payments.SagePayServer.Controllers
             if (result.Success == false)
             {
                 model.Warnings.Add(result.Message);
-                return View("Nop.Plugin.Payments.SagePayServer.Views.PaymentSagePayServer.PaymentInfo", model);
+                return View("~/Plugins/Payments.SagePayServer/Views/PaymentSagePayServer/PaymentInfo.cshtml", model);
             }
 
             if (sagePayServerPaymentSettings.Profile == ProfileValues.Low || model.IsOnePageCheckout)
@@ -170,7 +202,7 @@ namespace Nop.Plugin.Payments.SagePayServer.Controllers
                 //Iframe
                 model.FrameUrl = result.PaymentUrl;
 
-                return View("Nop.Plugin.Payments.SagePayServer.Views.PaymentSagePayServer.PaymentInfo", model);
+                return View("~/Plugins/Payments.SagePayServer/Views/PaymentSagePayServer/PaymentInfo.cshtml", model);
             } 
             else
             {
@@ -250,9 +282,10 @@ namespace Nop.Plugin.Payments.SagePayServer.Controllers
         [NonAction]
         protected bool UseOnePageCheckout()
         {
-            var useMobileDevice = _mobileDeviceHelper.IsMobileDevice(_httpContext)
-                && _mobileDeviceHelper.MobileDevicesSupported()
-                && !_mobileDeviceHelper.CustomerDontUseMobileVersion();
+            var useMobileDevice = false; 
+            //_mobileDeviceHelper.IsMobileDevice(_httpContext)
+            //    && _mobileDeviceHelper.MobileDevicesSupported()
+            //    && !_mobileDeviceHelper.CustomerDontUseMobileVersion();
 
             //mobile version doesn't support one-page checkout
             if (useMobileDevice)
